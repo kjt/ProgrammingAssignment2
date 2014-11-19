@@ -14,6 +14,11 @@
 ## to calculate the inverse itself. FWIW, I think that would have been a cleaner
 ## abstraction, considering that the cache object already has its own member functions.
 
+## Example:
+## m <- matrix(rnorm(1000000), nrow=1000)
+## m_cached<-makeCacheMatrix(m)
+## cacheSolve(m_cached)
+## cacheSolve(m_cached)
 
 ## This function creates a special "matrix" object that can cache its inverse.
 makeCacheMatrix <- function(x = matrix()) {
