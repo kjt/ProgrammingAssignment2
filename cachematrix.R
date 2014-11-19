@@ -1,34 +1,34 @@
-packageTest <- function(x)
-{
-  if (!require(x,character.only = TRUE))
-  {
-    install.packages(x,dep=TRUE)
-    if(!require(x,character.only = TRUE)) stop("Package not found")
-  }
-}
+## The following functions wrap the R matrix class, allowing the inverse of the
+## matrix to be cached and repeatedly referenced without having to recalculate it.
+##
+## The first function, makeCacheMatrix, provides the data cache for a matrix and
+## its inverse, as well as some basic accessor functions. The second function,
+## cacheSolve, has two behaviors. The first time it's called, it gets the matrix
+## from the cache, calculates the inverse and stores the inverse back in the cache.
+## The second and Nth time cacheSolve is called with the same cache object, it retrieves
+## the previously-computed inverse from the cache object. This prevents the inverse
+## from having to be recalculated on subsequent calls.
 
-packageTest('matrixcalc')
+## Note that this is done in classic R style rather than the encapsulation style found in
+## other object-oriented languages. It would have been just as easy for makeCacheMatrix
+## to calculate the inverse itself. FWIW, I think that would have been a cleaner
+## abstraction, considering that the cache object already has its own member functions.
 
-
-## Put comments here that give an overall description of what your
-## functions do
 
 ## This function creates a special "matrix" object that can cache its inverse.
 makeCacheMatrix <- function(x = matrix()) {
+  ## sanity checks, even though we can assume an invertible matrix
   if (class(x) != "matrix") {
     stop ("Argument must be a square matrix")
   }
-
-  d = dim(x)
+  d<-dim(x)
   if (d[1] != d[2]) {
     stop ("Matrix must be square")
   }
-  
-  if (is.singular.matrix(x)) {
-    stop ("Matrix is singular and cannot be inverted")
-  }
-  
+    
   inv <- NULL
+  
+  ## create and return the accessor functions
   set <- function(y) {
     x <<- y
     inv <<- NULL
